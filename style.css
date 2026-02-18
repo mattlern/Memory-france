@@ -1,0 +1,182 @@
+/* style.css */
+:root{
+  --bg: #071425;
+  --bg2:#081a31;
+  --gold:#d9b35e;
+  --gold2:#f2dc9b;
+  --cardShadow: 0 18px 45px rgba(0,0,0,.45);
+}
+
+*{ box-sizing:border-box; }
+
+body{
+  margin:0;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255,255,255,0.05), transparent 45%),
+    radial-gradient(circle at 70% 80%, rgba(255,255,255,0.04), transparent 50%),
+    linear-gradient(180deg, var(--bg2), var(--bg));
+  overflow:hidden;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+/* chrono top-right */
+.hud{
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 50;
+}
+.timer{
+  padding: 10px 14px;
+  border-radius: 12px;
+  color: rgba(255,255,255,.92);
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(217,179,94,.35);
+  box-shadow: 0 12px 30px rgba(0,0,0,.35);
+  letter-spacing: 0.6px;
+  font-variant-numeric: tabular-nums;
+}
+.timer.done{
+  color: #2cff7a;
+  border-color: rgba(44,255,122,.55);
+  background: rgba(44,255,122,.08);
+}
+
+.wrap{
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  padding: 56px 18px 18px;
+}
+
+/* ✅ 30 cartes -> grille 6 colonnes (5 lignes) */
+.board{
+  width: min(960px, 94vw);
+  display:grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 860px){
+  .board{ grid-template-columns: repeat(5, 1fr); }
+}
+@media (max-width: 680px){
+  .board{ grid-template-columns: repeat(4, 1fr); }
+}
+@media (max-width: 480px){
+  .board{ grid-template-columns: repeat(3, 1fr); }
+}
+
+/* Carte */
+.card{
+  aspect-ratio: 1 / 1;
+  perspective: 1000px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+
+.inner{
+  width:100%;
+  height:100%;
+  position:relative;
+  transform-style: preserve-3d;
+  transition: transform 360ms ease;
+  border-radius: 16px;
+  box-shadow: var(--cardShadow);
+}
+
+.card.flipped .inner{ transform: rotateY(180deg); }
+
+.face{
+  position:absolute;
+  inset:0;
+  backface-visibility:hidden;
+  border-radius: 16px;
+  overflow:hidden;
+}
+
+/* Dos bleu marine + bordure dorée (rien au centre) */
+.back{
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255,255,255,0.06), transparent 50%),
+    linear-gradient(145deg, rgba(255,255,255,0.05), rgba(0,0,0,0.15)),
+    #061427;
+
+  border: 2px solid rgba(217,179,94,.72);
+  box-shadow:
+    inset 0 0 0 1px rgba(242,220,155,.25),
+    inset 0 0 22px rgba(217,179,94,.12);
+
+  display:grid;
+  place-items:center;
+}
+
+/* Face avant = image */
+.front{
+  transform: rotateY(180deg);
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,0.15);
+}
+
+.front img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Validation : petit “pop” + retour */
+.card.matched .inner{
+  animation: matchedPop 520ms ease;
+}
+@keyframes matchedPop{
+  0%   { transform: rotateY(180deg) scale(1); }
+  45%  { transform: rotateY(180deg) scale(1.04); }
+  75%  { transform: rotateY(180deg) scale(0.995); }
+  100% { transform: rotateY(180deg) scale(1); }
+}
+
+/* petites étoiles discrètes */
+.sparkle{
+  position:absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(242,220,155,.9);
+  box-shadow: 0 0 10px rgba(242,220,155,.65);
+  opacity: 0;
+  animation: sparkle 650ms ease-out forwards;
+}
+
+@keyframes sparkle{
+  0%   { transform: translate(0,0) scale(.6); opacity: 0; }
+  20%  { opacity: .9; }
+  100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; }
+}
+
+/* pluie drapeaux français */
+.confetti{
+  position: fixed;
+  inset: 0;
+  pointer-events:none;
+  overflow:hidden;
+  z-index: 60;
+}
+
+.flag{
+  position:absolute;
+  top: -30px;
+  font-size: 22px;
+  opacity: 0;
+  animation: fall 2.8s linear forwards;
+  filter: drop-shadow(0 10px 12px rgba(0,0,0,.25));
+}
+
+@keyframes fall{
+  0%   { transform: translateY(-30px) rotate(0deg); opacity: 0; }
+  10%  { opacity: 1; }
+  100% { transform: translateY(110vh) rotate(180deg); opacity: 0; }
+}
